@@ -1,4 +1,4 @@
-import { pgTable, serial, text, varchar, timestamp, uuid, integer } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, varchar, timestamp, uuid, integer, real, doublePrecision } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 // Users table
@@ -27,6 +27,9 @@ export const plants = pgTable('plants', {
   species: text('species').notNull(),
   weeklyWaterMl: integer('weekly_water_ml').notNull(),
   humidity: integer('humidity').notNull(),
+  location: text('location').notNull(),
+  longitude: real('longitude').notNull(),
+  latitude: real('latitude').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
