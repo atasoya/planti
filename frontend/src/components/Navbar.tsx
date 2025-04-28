@@ -50,7 +50,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-planti-green-800 text-white shadow-md rounded-md">
+    <nav className="bg-planti-green-800/90 text-white shadow-md rounded-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
