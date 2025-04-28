@@ -1,7 +1,33 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import Image from "next/image";
+import { toast } from "sonner";
 
-const page = () => {
+const LoginPage = () => {
+  const [email, setEmail] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("Form submitted with email:", email);
+    // send email to user
+    const response = await fetch("http://localhost:3001/api/auth/magic-link/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+    const data = await response.json();
+    console.log(data);
+    if (response.ok) {
+      console.log("Email sent successfully");
+      toast.success("Email sent successfully");
+    } else {
+      console.log("Failed to send email");
+      toast.error("Failed to send email");
+    }
+  };
+
   return (
     <div className="w-full min-h-screen flex flex-col lg:flex-row items-center justify-center p-4 relative bg-cover bg-center bg-[url('/planti-login-banner.jpeg')] lg:bg-none lg:bg-green-50">
       <div className="absolute inset-0 bg-planti-green-900/40 lg:hidden"></div>
@@ -22,7 +48,10 @@ const page = () => {
           Login to Planti 🪴
         </h1>
 
-        <form className="space-y-4 lg:space-y-6 max-w-md mx-auto w-full">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4 lg:space-y-6 max-w-md mx-auto w-full"
+        >
           <div>
             <label
               htmlFor="email"
@@ -33,6 +62,8 @@ const page = () => {
             <input
               id="email"
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full p-3 rounded-md border border-planti-green-600 focus:outline-none focus:ring-2 focus:ring-planti-green-800"
               placeholder="Enter your email"
               required
@@ -55,4 +86,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default LoginPage;
