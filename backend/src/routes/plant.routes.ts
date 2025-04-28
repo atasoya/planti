@@ -2,6 +2,9 @@ import express, { Request, Response } from 'express';
 import { addPlant, getUserPlants, getPlantById, updatePlant } from '../services/plant.service';
 import { authenticate } from '../middleware/auth.middleware';
 import cookieParser from 'cookie-parser';
+import { and, eq } from 'drizzle-orm';
+import { plants } from '../db/schema';
+import { db } from '../db';
 
 const router = express.Router();
 
@@ -124,6 +127,33 @@ router.put('/:id', async (req: Request, res: Response) => {
     }
     
     return res.status(500).json({ error: 'Failed to update plant' });
+  }
+});
+
+router.delete('/:id', async (req: Request, res: Response) => {
+  const plantId = parseInt(req.params.id);
+  
+  if (isNaN(plantId)) {
+    return res.status(400).json({ error: 'Invalid plant ID' });
+  }
+  
+  try {
+    const plant = await getPlantById(plantId, req.userId!);
+    
+    if (!plant) {
+      return res.status(404).json({ error: 'Plant not found' });
+    }
+    
+    await db.delete(plants)
+      .where(and(
+        eq(plants.id, plantId),
+        eq(plants.userId, req.userId!)
+      ));
+    
+    return res.status(200).json({ message: 'Plant deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting plant:', error);
+    return res.status(500).json({ error: 'Failed to delete plant' });
   }
 });
 
