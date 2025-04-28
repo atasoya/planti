@@ -35,6 +35,16 @@ export const plants = pgTable('plants', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
+// Plant data table
+export const plantData = pgTable('plant_data', {
+  id: serial('id').primaryKey(),
+  plantId: integer('plant_id').notNull(),
+  healthScore: integer('health_score').notNull(),
+  humidity: integer('humidity').notNull(),
+  weeklyWaterMl: integer('weekly_water_ml').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
 // Relationships
 export const usersRelations = relations(users, ({ many }) => ({
   authTokens: many(authTokens),
@@ -52,6 +62,13 @@ export const plantsRelations = relations(plants, ({ one }) => ({
   user: one(users, {
     fields: [plants.userId],
     references: [users.id],
+  }),
+}));
+
+export const plantDataRelations = relations(plantData, ({ one }) => ({
+  plant: one(plants, {
+    fields: [plantData.plantId],
+    references: [plants.id],
   }),
 }));
 
