@@ -1,5 +1,5 @@
 import React from "react";
-import { Droplet, Thermometer, Check } from "lucide-react";
+import { Droplet, Thermometer, Check, MapPin } from "lucide-react";
 import { PlantFormData } from "./PlantForm";
 
 interface PlantPreviewCardProps {
@@ -27,6 +27,19 @@ export const PlantPreviewCard = ({ plant }: PlantPreviewCardProps) => {
           <p className="text-sm text-gray-600 italic">
             {plant.species || "Select a species"}
           </p>
+
+          {plant.location && (
+            <div className="flex items-center mt-2 text-sm text-gray-500">
+              <MapPin size={14} className="text-planti-green-600 mr-1" />
+              <span className="truncate max-w-[200px]">{plant.location}</span>
+            </div>
+          )}
+
+          {plant.latitude && plant.longitude && (
+            <p className="text-xs text-gray-400 mt-1">
+              {plant.latitude.toFixed(5)}, {plant.longitude.toFixed(5)}
+            </p>
+          )}
         </div>
 
         <div className="p-4 bg-green-50">
