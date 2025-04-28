@@ -55,10 +55,7 @@ const PlantDetailPage = () => {
         }
 
         const data = await response.json();
-
-        setPlant({
-          ...data.plant,
-        });
+        setPlant(data.plant);
       } catch (error) {
         console.error("Error fetching plant:", error);
         toast.error("Failed to load plant data. Please try again later.");

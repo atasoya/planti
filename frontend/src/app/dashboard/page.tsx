@@ -45,12 +45,7 @@ const DashboardPage = () => {
         }
 
         const data = await response.json();
-
-        const enhancedPlants = data.plants.map((plant: Plant) => ({
-          ...plant,
-        }));
-
-        setPlants(enhancedPlants);
+        setPlants(data.plants);
       } catch (error) {
         console.error("Error fetching plants:", error);
         toast.error("Failed to load plants. Please try again later.");
