@@ -19,6 +19,18 @@ export const authTokens = pgTable('auth_tokens', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
+// Plants table
+export const plants = pgTable('plants', {
+  id: serial('id').primaryKey(),
+  icon: text('icon').notNull(),
+  name: text('name').notNull(),
+  species: text('species').notNull(),
+  weeklyWaterMl: integer('weekly_water_ml').notNull(),
+  humidity: integer('humidity').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
 // Relationships
 export const usersRelations = relations(users, ({ many }) => ({
   authTokens: many(authTokens),
@@ -31,8 +43,14 @@ export const authTokensRelations = relations(authTokens, ({ one }) => ({
   }),
 }));
 
+export const plantsRelations = relations(plants, ({ many }) => ({
+  users: many(users),
+}));
+
 // Export types
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type AuthToken = typeof authTokens.$inferSelect;
-export type NewAuthToken = typeof authTokens.$inferInsert; 
+export type NewAuthToken = typeof authTokens.$inferInsert;
+export type Plant = typeof plants.$inferSelect;
+export type NewPlant = typeof plants.$inferInsert;
