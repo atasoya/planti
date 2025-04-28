@@ -8,7 +8,7 @@ const protectedRoutes = [
 export async function middleware(request: NextRequest) {
   console.log("Middleware running");
   const { pathname } = request.nextUrl;
-  const session = request.cookies.get('plant-auth-token');
+  const session = request.cookies.get('planti-auth-token');
   
   if (pathname === '/login' && session) {
     return NextResponse.redirect(new URL('/dashboard', request.url));

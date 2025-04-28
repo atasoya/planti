@@ -46,7 +46,7 @@ router.post('/verify', async (req: Request, res: Response) => {
         sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
       };
 
-      res.setHeader('Set-Cookie', serialize('plant-auth-token', result.token, cookieOptions));
+      res.setHeader('Set-Cookie', serialize('planti-auth-token', result.token, cookieOptions));
 
       return res.status(200).json({ 
         user: result.user 
@@ -70,7 +70,7 @@ router.post('/logout', (req: Request, res: Response) => {
       sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
     };
 
-    res.setHeader('Set-Cookie', serialize('plant-auth-token', '', cookieOptions));
+    res.setHeader('Set-Cookie', serialize('planti-auth-token', '', cookieOptions));
     
     console.log('Logout successful, cookie cleared.');
     return res.status(200).json({ message: 'Logged out successfully' });
