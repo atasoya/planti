@@ -9,8 +9,11 @@ const LoginPage = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Form submitted with email:", email);
+
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+
     // send email to user
-    const response = await fetch("http://localhost:3001/api/auth/magic-link/", {
+    const response = await fetch(`${apiUrl}/api/auth/magic-link`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
