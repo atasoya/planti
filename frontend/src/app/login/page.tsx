@@ -18,16 +18,17 @@ const LoginPage = () => {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({ email }),
     });
     const data = await response.json();
     console.log(data);
     if (response.ok) {
       console.log("Email sent successfully");
-      toast.success("Email sent successfully");
+      toast.success("Magic link sent! Check your email inbox");
     } else {
       console.log("Failed to send email");
-      toast.error("Failed to send email");
+      toast.error(data.error || "Failed to send magic link");
     }
   };
 

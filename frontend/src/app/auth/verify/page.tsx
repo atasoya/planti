@@ -15,10 +15,11 @@ function VerifyPageContent() {
 
     const verifyEmail = async () => {
       const response = await fetch(`${apiUrl}/api/auth/verify`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        method: "POST",
+        credentials: "include",
         body: JSON.stringify({ token }),
       });
       console.log("Response:", response);
