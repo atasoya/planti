@@ -17,12 +17,18 @@
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.43.1",
     "express": "^4.18.2",
-    "pg": "^8.15.6"
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.10.1",
+    "pg": "^8.15.6",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^20.10.5",
+    "@types/nodemailer": "^6.4.17",
+    "@types/uuid": "^10.0.0",
     "cross-env": "^7.0.3",
     "drizzle-kit": "^0.31.0",
     "ts-node-dev": "^2.0.0",
