@@ -3,6 +3,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --color-planti-green-900: #0F2A1D;
+  --color-planti-green-800: #375534;
+  --color-planti-green-700: #6B9071;
+  --color-planti-green-600: #AEC380;
+  --color-planti-green-500: #E3EED4;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -42,6 +50,7 @@
 }
 
 :root {
+  --color-turquoise: #18a4aa;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -117,5 +126,26 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Planti Tailwind CSS 4 custom colors */
+:global() {
+  --tw-bg-planti-green-900: var(--planti-green-900);
+  --tw-bg-planti-green-800: var(--planti-green-800);
+  --tw-bg-planti-green-700: var(--planti-green-700);
+  --tw-bg-planti-green-600: var(--planti-green-600);
+  --tw-bg-planti-green-500: var(--planti-green-500);
+  
+  --tw-text-planti-green-900: var(--planti-green-900);
+  --tw-text-planti-green-800: var(--planti-green-800);
+  --tw-text-planti-green-700: var(--planti-green-700);
+  --tw-text-planti-green-600: var(--planti-green-600);
+  --tw-text-planti-green-500: var(--planti-green-500);
+  
+  --tw-border-planti-green-900: var(--planti-green-900);
+  --tw-border-planti-green-800: var(--planti-green-800);
+  --tw-border-planti-green-700: var(--planti-green-700);
+  --tw-border-planti-green-600: var(--planti-green-600);
+  --tw-border-planti-green-500: var(--planti-green-500);
 }
 
