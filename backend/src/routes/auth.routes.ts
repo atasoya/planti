@@ -1,7 +1,10 @@
 import express, { Request, Response } from 'express';
 import { createMagicLink, verifyMagicLink } from '../services/auth.service';
+import { serialize } from 'cookie';
 
 const router = express.Router();
+
+const TOKEN_EXPIRY_SECONDS = 60 * 60 * 24 * 7;
 
 router.post('/magic-link', async (req: Request, res: Response) => {
   const { email } = req.body;
@@ -34,9 +37,18 @@ router.post('/verify', async (req: Request, res: Response) => {
   try {
     const result = await verifyMagicLink(token);
     
-    if (result) {
+    if (result && result.token && result.user) {
+      const cookieOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        path: '/',
+        maxAge: TOKEN_EXPIRY_SECONDS,
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
+      };
+
+      res.setHeader('Set-Cookie', serialize('plant-auth-token', result.token, cookieOptions));
+
       return res.status(200).json({ 
-        token: result.token, 
         user: result.user 
       });
     } else {
@@ -45,6 +57,26 @@ router.post('/verify', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error verifying magic link:', error);
     return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.post('/logout', (req: Request, res: Response) => {
+  try {
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      maxAge: -1,
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
+    };
+
+    res.setHeader('Set-Cookie', serialize('plant-auth-token', '', cookieOptions));
+    
+    console.log('Logout successful, cookie cleared.');
+    return res.status(200).json({ message: 'Logged out successfully' });
+  } catch (error) {
+    console.error('Error during logout:', error);
+    return res.status(500).json({ error: 'Internal server error during logout' });
   }
 });
 
