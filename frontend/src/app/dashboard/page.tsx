@@ -89,13 +89,25 @@ const DashboardPage = () => {
       ) : plants.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {plants.map((plant) => (
-            <PlantCard
-              key={plant.id}
-              plant={plant}
-              healthScore={plant.healthScore}
-              healthTrend={plant.healthTrend}
-              onClick={() => router.push(`/dashboard/plant/${plant.id}`)}
-            />
+            <div key={plant.id} className="flex flex-col">
+              <PlantCard
+                plant={plant}
+                healthScore={plant.healthScore}
+                healthTrend={plant.healthTrend}
+                onClick={() => router.push(`/dashboard/plant/${plant.id}`)}
+              />
+              <div className="flex justify-end mt-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push(`/dashboard/plant/${plant.id}/edit`);
+                  }}
+                  className="text-sm px-3 py-1 bg-planti-green-600 text-white rounded hover:bg-planti-green-700 transition-colors"
+                >
+                  Edit
+                </button>
+              </div>
+            </div>
           ))}
         </div>
       ) : (
