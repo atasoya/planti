@@ -2,8 +2,10 @@ import { db } from '../db';
 import { plants, NewPlant } from '../db/schema';
 import { eq, and } from 'drizzle-orm';
 
+type PlantInput = Omit<NewPlant, 'createdAt' | 'updatedAt' | 'userId'>;
+
 export async function addPlant(
-  plantData: Omit<NewPlant, 'createdAt' | 'updatedAt' | 'userId'>, 
+  plantData: PlantInput, 
   userId: number
 ): Promise<any> {
   try {
@@ -55,7 +57,7 @@ export async function getPlantById(plantId: number, userId: number): Promise<any
 export async function updatePlant(
   plantId: number, 
   userId: number, 
-  updateData: Partial<Omit<NewPlant, 'createdAt' | 'updatedAt' | 'userId'>>
+  updateData: Partial<PlantInput>
 ): Promise<any> {
   try {
     const plant = await getPlantById(plantId, userId);

@@ -5,6 +5,8 @@ import cookieParser from 'cookie-parser';
 import { and, eq } from 'drizzle-orm';
 import { plants } from '../db/schema';
 import { db } from '../db';
+import { getWeatherData, calculatePlantHealthScore } from '../utils/weather';
+import { addPlantDataRecord } from '../services/plant-data.service';
 
 const router = express.Router();
 
@@ -19,6 +21,53 @@ router.get('/', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error fetching plants:', error);
     return res.status(500).json({ error: 'Failed to fetch plants' });
+  }
+});
+
+router.get('/:id/health', async (req: Request, res: Response) => {
+  const plantId = parseInt(req.params.id);
+  
+  if (isNaN(plantId)) {
+    return res.status(400).json({ error: 'Invalid plant ID' });
+  }
+  
+  try {
+    const plant = await getPlantById(plantId, req.userId!);
+    
+    if (!plant) {
+      return res.status(404).json({ error: 'Plant not found' });
+    }
+    
+    const weatherData = await getWeatherData(plant.latitude, plant.longitude);
+    
+    const healthScore = calculatePlantHealthScore(
+      plant.weeklyWaterMl,
+      plant.humidity,
+      weatherData
+    );
+    
+    await addPlantDataRecord({
+      plantId: plant.id,
+      healthScore,
+      humidity: weatherData.humidity,
+      weeklyWaterMl: plant.weeklyWaterMl
+    });
+    
+    await db.update(plants)
+      .set({ healthScore, updatedAt: new Date() })
+      .where(and(
+        eq(plants.id, plantId),
+        eq(plants.userId, req.userId!)
+      ));
+    
+    return res.status(200).json({ 
+      plant: { ...plant, healthScore },
+      healthScore,
+      currentWeather: weatherData
+    });
+  } catch (error) {
+    console.error('Error getting plant health:', error);
+    return res.status(500).json({ error: 'Failed to get plant health information' });
   }
 });
 
@@ -46,7 +95,6 @@ router.get('/:id', async (req: Request, res: Response) => {
 router.post('/', async (req: Request, res: Response) => {
   const { icon, name, species, weeklyWaterMl, humidity, location, longitude, latitude } = req.body;
   
-  // Validate required fields
   if (!icon || !name || !species || typeof weeklyWaterMl !== 'number' || 
       typeof humidity !== 'number' || !location || 
       typeof longitude !== 'number' || typeof latitude !== 'number') {
@@ -54,6 +102,14 @@ router.post('/', async (req: Request, res: Response) => {
   }
   
   try {
+    const weatherData = await getWeatherData(latitude, longitude);
+    
+    const initialHealthScore = calculatePlantHealthScore(
+      weeklyWaterMl,
+      humidity,
+      weatherData
+    );
+    
     const plant = await addPlant({
       icon,
       name,
@@ -62,10 +118,22 @@ router.post('/', async (req: Request, res: Response) => {
       humidity,
       location,
       longitude,
-      latitude
+      latitude,
+      healthScore: initialHealthScore
     }, req.userId!);
     
-    return res.status(201).json({ plant });
+    await addPlantDataRecord({
+      plantId: plant.id,
+      healthScore: initialHealthScore,
+      humidity: weatherData.humidity,
+      weeklyWaterMl: weeklyWaterMl
+    });
+    
+    return res.status(201).json({ 
+      plant,
+      healthScore: initialHealthScore,
+      currentWeather: weatherData
+    });
   } catch (error) {
     console.error('Error adding plant:', error);
     return res.status(500).json({ error: 'Failed to add plant' });
@@ -117,6 +185,30 @@ router.put('/:id', async (req: Request, res: Response) => {
   }
   
   try {
+    // If any parameters affecting health have change calculate health score
+    if (weeklyWaterMl !== undefined || humidity !== undefined || longitude !== undefined || latitude !== undefined) {
+      const plant = await getPlantById(plantId, req.userId!);
+      
+      if (plant) {
+        const newLongitude = longitude !== undefined ? longitude : plant.longitude;
+        const newLatitude = latitude !== undefined ? latitude : plant.latitude;
+        const newWeeklyWaterMl = weeklyWaterMl !== undefined ? weeklyWaterMl : plant.weeklyWaterMl;
+        const newHumidity = humidity !== undefined ? humidity : plant.humidity;
+        
+        const weatherData = await getWeatherData(newLatitude, newLongitude);
+        const newHealthScore = calculatePlantHealthScore(newWeeklyWaterMl, newHumidity, weatherData);
+        
+        updateData.healthScore = newHealthScore;
+        
+        await addPlantDataRecord({
+          plantId: plant.id,
+          healthScore: newHealthScore,
+          humidity: weatherData.humidity,
+          weeklyWaterMl: newWeeklyWaterMl
+        });
+      }
+    }
+    
     const updatedPlant = await updatePlant(plantId, req.userId!, updateData);
     return res.status(200).json({ plant: updatedPlant });
   } catch (error) {

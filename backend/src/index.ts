@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.routes';
 import plantRoutes from './routes/plant.routes';
+import plantDataRoutes from './routes/plant-data.routes';
 
 // Load environment variables
 dotenv.config();
@@ -22,6 +23,7 @@ app.use(cookieParser());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/plants', plantRoutes);
+app.use('/api/plant-data', plantDataRoutes);
 
 app.get('/api/health', (req: Request, res: Response) => {
   res.json({ status: 'ok' });
