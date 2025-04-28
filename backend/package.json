@@ -9,7 +9,8 @@
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "db:generate": "cross-env DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/planti} drizzle-kit generate",
     "db:migrate": "cross-env DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/planti} ts-node-dev src/db/migrate.ts",
-    "db:studio": "cross-env DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/planti} drizzle-kit studio"
+    "db:studio": "cross-env DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/planti} drizzle-kit studio",
+    "db:seed": "cross-env DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/planti} ts-node-dev src/scripts/seed.ts"
   },
   "dependencies": {
     "@types/cookie-parser": "^1.4.8",
