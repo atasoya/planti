@@ -22,6 +22,7 @@ export const authTokens = pgTable('auth_tokens', {
 // Plants table
 export const plants = pgTable('plants', {
   id: serial('id').primaryKey(),
+  userId: integer('user_id').notNull(),
   icon: text('icon').notNull(),
   name: text('name').notNull(),
   species: text('species').notNull(),
@@ -37,6 +38,7 @@ export const plants = pgTable('plants', {
 // Relationships
 export const usersRelations = relations(users, ({ many }) => ({
   authTokens: many(authTokens),
+  plants: many(plants),
 }));
 
 export const authTokensRelations = relations(authTokens, ({ one }) => ({
@@ -46,8 +48,11 @@ export const authTokensRelations = relations(authTokens, ({ one }) => ({
   }),
 }));
 
-export const plantsRelations = relations(plants, ({ many }) => ({
-  users: many(users),
+export const plantsRelations = relations(plants, ({ one }) => ({
+  user: one(users, {
+    fields: [plants.userId],
+    references: [users.id],
+  }),
 }));
 
 // Export types

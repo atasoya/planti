@@ -12,8 +12,10 @@
     "db:studio": "cross-env DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/planti} drizzle-kit studio"
   },
   "dependencies": {
+    "@types/cookie-parser": "^1.4.8",
     "@types/pg": "^8.11.14",
     "cookie": "^1.0.2",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.43.1",
