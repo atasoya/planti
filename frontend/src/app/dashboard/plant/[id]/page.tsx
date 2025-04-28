@@ -24,8 +24,8 @@ interface Plant {
   latitude: number;
   createdAt: string;
   updatedAt: string;
-  healthScore?: number;
-  healthTrend?: "up" | "down" | "stable";
+  healthScore: number;
+  healthTrend: "up" | "down" | "stable";
 }
 
 const PlantDetailPage = () => {
@@ -58,10 +58,6 @@ const PlantDetailPage = () => {
 
         setPlant({
           ...data.plant,
-          healthScore: Math.floor(Math.random() * 30) + 70,
-          healthTrend: ["up", "down", "stable"][
-            Math.floor(Math.random() * 3)
-          ] as "up" | "down" | "stable",
         });
       } catch (error) {
         console.error("Error fetching plant:", error);

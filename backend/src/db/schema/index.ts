@@ -32,6 +32,7 @@ export const plants = pgTable('plants', {
   longitude: real('longitude').notNull(),
   latitude: real('latitude').notNull(),
   healthScore: integer('health_score').default(80),
+  healthTrend: text('health_trend').default('stable'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

@@ -18,8 +18,8 @@ interface Plant {
   latitude: number;
   createdAt: string;
   updatedAt: string;
-  healthScore?: number;
-  healthTrend?: "up" | "down" | "stable";
+  healthScore: number;
+  healthTrend: "up" | "down" | "stable";
 }
 
 const DashboardPage = () => {
@@ -48,10 +48,6 @@ const DashboardPage = () => {
 
         const enhancedPlants = data.plants.map((plant: Plant) => ({
           ...plant,
-          healthScore: Math.floor(Math.random() * 30) + 70,
-          healthTrend: ["up", "down", "stable"][
-            Math.floor(Math.random() * 3)
-          ] as "up" | "down" | "stable",
         }));
 
         setPlants(enhancedPlants);
