@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Droplet,
-  Thermometer,
-  MapPin,
-  TrendingUp,
-  TrendingDown,
-} from "lucide-react";
+import { Droplet, Thermometer, MapPin } from "lucide-react";
 
 export interface PlantCardProps {
   plant: {
@@ -32,93 +26,80 @@ export const PlantCard = ({
   healthTrend = "stable",
   onClick,
 }: PlantCardProps) => {
-  const renderHealthTrendIcon = () => {
-    if (healthTrend === "up") {
-      return <TrendingUp size={14} className="text-green-600 mr-1" />;
-    } else if (healthTrend === "down") {
-      return <TrendingDown size={14} className="text-red-500 mr-1" />;
-    }
-    return null; // No icon for stable
-  };
-
-  const getHealthColor = () => {
-    if (healthScore >= 90) return "text-green-600";
-    if (healthScore >= 80) return "text-green-500";
-    if (healthScore >= 70) return "text-yellow-500";
-    return "text-red-500";
-  };
-
   return (
     <div
-      className={`bg-white shadow rounded-lg overflow-hidden h-[290px] w-full flex flex-col ${
+      className={`bg-white shadow-sm rounded-lg overflow-hidden h-[250px] w-full flex flex-col ${
         onClick ? "cursor-pointer hover:shadow-md transition-shadow" : ""
       }`}
       onClick={onClick}
     >
-      <div className="flex items-start p-3 border-b border-gray-100">
-        <div className="text-xl mr-2">{plant.icon}</div>
-        <div className="flex-1 min-w-0">
-          <h3 className="text-base font-semibold text-planti-green-900 truncate">
+      <div className="p-3 border-b flex items-center">
+        <div className="text-3xl mr-2">{plant.icon}</div>
+        <div>
+          <h2 className="text-lg font-bold text-planti-green-900 line-clamp-1">
             {plant.name || (isPreview ? "My New Plant" : "Unknown Plant")}
-          </h3>
-          <p className="text-xs text-gray-600 italic truncate">
+          </h2>
+          <p className="text-xs text-gray-600 italic line-clamp-1">
             {plant.species ||
               (isPreview ? "Select a species" : "Unknown species")}
           </p>
         </div>
-        <div className="flex items-center ml-2">
-          {renderHealthTrendIcon()}
-          <span className={`text-xs font-semibold ${getHealthColor()}`}>
-            {healthScore}%
+      </div>
+
+      <div className="p-3 text-sm space-y-2.5 flex-1">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center text-planti-green-900">
+            <Droplet size={14} className="mr-1.5 text-blue-500" />
+            <span className="font-medium text-xs">Water</span>
+          </div>
+          <span className="text-xs">{plant.weeklyWaterMl} ml</span>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center text-planti-green-900">
+            <Thermometer size={14} className="mr-1.5 text-red-500" />
+            <span className="font-medium text-xs">Humidity</span>
+          </div>
+          <span className="text-xs">{plant.humidity}%</span>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center text-planti-green-900">
+            <MapPin size={14} className="mr-1.5 text-green-500" />
+            <span className="font-medium text-xs">Location</span>
+          </div>
+          <span className="text-xs truncate max-w-[120px]">
+            {plant.location}
           </span>
         </div>
-      </div>
 
-      <div className="flex-1 p-3 flex flex-col">
-        {plant.location && (
-          <div className="flex items-center mb-2 text-xs text-gray-500">
-            <MapPin
-              size={12}
-              className="text-planti-green-600 mr-1 flex-shrink-0"
-            />
-            <span className="truncate">{plant.location}</span>
+        <div className="bg-planti-green-50 rounded p-2">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-medium">Health Score</span>
+            <span className="text-xs font-bold">{healthScore}%</span>
           </div>
-        )}
-
-        <div className="grid grid-cols-2 gap-2 mt-auto">
-          <div className="bg-blue-50 rounded p-2">
-            <div className="flex items-center">
-              <Droplet size={12} className="text-blue-500 mr-1" />
-              <span className="text-xs font-medium text-blue-800">Water</span>
-            </div>
-            <p className="text-xs mt-1 font-semibold">
-              {plant.weeklyWaterMl} ml
-            </p>
-          </div>
-
-          <div className="bg-red-50 rounded p-2">
-            <div className="flex items-center">
-              <Thermometer size={12} className="text-red-500 mr-1" />
-              <span className="text-xs font-medium text-red-800">Humidity</span>
-            </div>
-            <p className="text-xs mt-1 font-semibold">{plant.humidity}%</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-neutral-100 p-2 text-xs border-t border-gray-200">
-        <div className="flex justify-between">
-          <div className="flex items-center">
-            <span className="text-gray-500 mr-1">Health:</span>
-            <span className={`font-medium ${getHealthColor()}`}>
-              {healthScore}%
+          <div className="flex items-center text-xs">
+            <span className="bg-gray-200 h-1.5 w-full rounded-full overflow-hidden">
+              <span
+                className={`block h-full rounded-full ${
+                  healthScore >= 90
+                    ? "bg-green-500"
+                    : healthScore >= 80
+                    ? "bg-green-400"
+                    : healthScore >= 70
+                    ? "bg-yellow-500"
+                    : "bg-red-500"
+                }`}
+                style={{ width: `${healthScore}%` }}
+              ></span>
             </span>
+            {healthTrend === "up" && (
+              <span className="ml-2 text-green-600 flex items-center">↑</span>
+            )}
+            {healthTrend === "down" && (
+              <span className="ml-2 text-red-600 flex items-center">↓</span>
+            )}
           </div>
-          {plant.latitude !== undefined && plant.longitude !== undefined && (
-            <span className="text-gray-400 truncate">
-              {plant.latitude.toFixed(4)}, {plant.longitude.toFixed(4)}
-            </span>
-          )}
         </div>
       </div>
     </div>

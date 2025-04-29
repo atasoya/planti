@@ -58,27 +58,27 @@ const DashboardPage = () => {
   }, []);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-        <h1 className="text-2xl font-bold text-planti-green-900">
+    <div className="space-y-4">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2">
+        <h1 className="text-xl font-bold text-planti-green-900">
           My Plants Collection
         </h1>
 
         <button
           onClick={() => router.push("/dashboard/plant/add")}
-          className="bg-planti-green-700 text-white px-4 py-2 rounded-md hover:bg-planti-green-800 transition-colors flex items-center justify-center"
+          className="bg-planti-green-700 text-white px-3 py-1.5 rounded-md hover:bg-planti-green-800 transition-colors flex items-center justify-center text-sm"
         >
-          <Leaf size={18} className="mr-2" />
+          <Leaf size={16} className="mr-1.5" />
           Add New Plant
         </button>
       </div>
 
       {loading ? (
-        <div className="flex justify-center items-center py-12">
+        <div className="flex justify-center items-center py-8">
           <div className="animate-spin h-8 w-8 border-4 border-planti-green-700 rounded-full border-t-transparent"></div>
         </div>
       ) : plants.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
           {plants.map((plant) => (
             <div key={plant.id} className="flex flex-col">
               <PlantCard
@@ -91,19 +91,19 @@ const DashboardPage = () => {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 bg-white rounded-lg shadow">
-          <div className="text-5xl mb-4">🌱</div>
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">
+        <div className="text-center py-8 bg-white rounded-lg shadow">
+          <div className="text-4xl mb-3">🌱</div>
+          <h2 className="text-lg font-semibold text-gray-700 mb-2">
             No plants yet
           </h2>
-          <p className="text-gray-500 mb-6">
+          <p className="text-gray-500 mb-4 text-sm">
             Add your first plant to start your collection
           </p>
           <button
             onClick={() => router.push("/dashboard/plant/add")}
-            className="bg-planti-green-700 text-white px-4 py-2 rounded-md hover:bg-planti-green-800 transition-colors inline-flex items-center"
+            className="bg-planti-green-700 text-white px-3 py-1.5 rounded-md hover:bg-planti-green-800 transition-colors inline-flex items-center text-sm"
           >
-            <Leaf size={16} className="mr-2" />
+            <Leaf size={14} className="mr-1.5" />
             Add Your First Plant
           </button>
         </div>
