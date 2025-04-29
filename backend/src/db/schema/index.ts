@@ -47,6 +47,17 @@ export const plantData = pgTable('plant_data', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
+// API keys table
+export const apiKeys = pgTable('api_keys', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').notNull(),
+  key: text('key').notNull().unique(),
+  name: text('name').notNull(),
+  usage: integer('usage').default(0),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
 // Relationships
 export const usersRelations = relations(users, ({ many }) => ({
   authTokens: many(authTokens),
@@ -74,6 +85,13 @@ export const plantDataRelations = relations(plantData, ({ one }) => ({
   }),
 }));
 
+export const apiKeysRelations = relations(apiKeys, ({ one }) => ({
+  user: one(users, {
+    fields: [apiKeys.userId],
+    references: [users.id],
+  }),
+}));
+
 // Export types
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -81,3 +99,5 @@ export type AuthToken = typeof authTokens.$inferSelect;
 export type NewAuthToken = typeof authTokens.$inferInsert;
 export type Plant = typeof plants.$inferSelect;
 export type NewPlant = typeof plants.$inferInsert;
+export type ApiKey = typeof apiKeys.$inferSelect;
+export type NewApiKey = typeof apiKeys.$inferInsert;
