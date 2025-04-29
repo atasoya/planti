@@ -1,6 +1,6 @@
 import { db } from '../db';
 import { plants, NewPlant } from '../db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, desc, count } from 'drizzle-orm';
 
 type PlantInput = Omit<NewPlant, 'createdAt' | 'updatedAt' | 'userId'>;
 
@@ -25,13 +25,25 @@ export async function addPlant(
   }
 }
 
-export async function getUserPlants(userId: number): Promise<any> {
+export async function getUserPlants(userId: number, page: number = 1, limit: number = 15): Promise<{plants: any[], total: number}> {
   try {
+    const offset = (page - 1) * limit;
+    
+    const totalCount = await db.select({ count: count() })
+      .from(plants)
+      .where(eq(plants.userId, userId));
+    
     const userPlants = await db.query.plants.findMany({
       where: eq(plants.userId, userId),
+      orderBy: [desc(plants.createdAt)],
+      limit: limit,
+      offset: offset
     });
     
-    return userPlants;
+    return {
+      plants: userPlants,
+      total: Number(totalCount[0].count)
+    };
   } catch (error) {
     console.error('Error in getUserPlants service:', error);
     throw error;

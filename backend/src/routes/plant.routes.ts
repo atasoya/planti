@@ -16,8 +16,28 @@ router.use(authenticate);
 
 router.get('/', async (req: Request, res: Response) => {
   try {
-    const plants = await getUserPlants(req.userId!);
-    return res.status(200).json({ plants });
+    const page = req.query.page ? parseInt(req.query.page as string) : 1;
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : 15;
+    
+    if (isNaN(page) || page < 1) {
+      return res.status(400).json({ error: 'Invalid page parameter' });
+    }
+    
+    if (isNaN(limit) || limit < 1 || limit > 50) {
+      return res.status(400).json({ error: 'Invalid limit parameter, must be between 1 and 50' });
+    }
+    
+    const result = await getUserPlants(req.userId!, page, limit);
+    
+    return res.status(200).json({ 
+      plants: result.plants,
+      pagination: {
+        total: result.total,
+        page,
+        limit,
+        totalPages: Math.ceil(result.total / limit)
+      }
+    });
   } catch (error) {
     console.error('Error fetching plants:', error);
     return res.status(500).json({ error: 'Failed to fetch plants' });
@@ -246,6 +266,38 @@ router.delete('/:id', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error deleting plant:', error);
     return res.status(500).json({ error: 'Failed to delete plant' });
+  }
+});
+
+router.get('/:id/history', async (req: Request, res: Response) => {
+  const plantId = parseInt(req.params.id);
+  
+  if (isNaN(plantId)) {
+    return res.status(400).json({ error: 'Invalid plant ID' });
+  }
+  
+  try {
+    const plant = await getPlantById(plantId, req.userId!);
+    
+    if (!plant) {
+      return res.status(404).json({ error: 'Plant not found' });
+    }
+    
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : 90;
+    
+    const { getPlantDataHistory, calculatePlantDataTrend } = require('../services/plant-data.service');
+    
+    const history = await getPlantDataHistory(plantId, limit);
+    const trend = await calculatePlantDataTrend(plantId);
+    
+    return res.status(200).json({ 
+      plant,
+      history,
+      trend
+    });
+  } catch (error) {
+    console.error('Error fetching plant history:', error);
+    return res.status(500).json({ error: 'Failed to fetch plant history data' });
   }
 });
 
