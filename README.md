@@ -37,26 +37,38 @@ It also provides a developer API, enabling users to create their own automations
    cd planti
    ```
 
-2. **Run Docker with docker-compose**
+2. **Create environment files**
+
+   Create `.env` files for both frontend and backend:
+
+   ```bash
+   # Backend .env file (in the backend directory)
+   cp backend/.exaple.env backend/.env
+
+   # Frontend .env.local file (in the frontend directory)
+   cp frontend/.example.env frontend/.env.local
+   ```
+
+3. **Run Docker with docker-compose**
 
    ```bash
    docker-compose -f docker-compose.dev.yml up
    ```
 
-3. **Create migration files and migrate the database**
+4. **Create migration files and migrate the database**
 
    ```bash
    npm run db:generate
    npm run db:migrate
    ```
 
-4. **Seed the database (optional)**
+5. **Seed the database (optional)**
 
    ```bash
    npm run db:seed
    ```
 
-5. **Additional development tools**
+6. **Additional development tools**
    - MailHog server is running at port 8025
    - Access Drizzle Studio by running `npm run db:studio` and visiting [local.drizzle.studio](http://local.drizzle.studio)
 
