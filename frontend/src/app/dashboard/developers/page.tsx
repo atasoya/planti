@@ -216,6 +216,18 @@ const DevelopersPage = () => {
 
           <div className="space-y-4">
             <div>
+              <h3 className="text-md font-semibold text-gray-700">Base URL</h3>
+              <p className="text-sm text-gray-600 mb-2">
+                All API requests use the following base URL:
+              </p>
+              <pre className="bg-gray-50 p-2 rounded text-xs overflow-auto">
+                {`${
+                  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+                }`}
+              </pre>
+            </div>
+
+            <div>
               <h3 className="text-md font-semibold text-gray-700">
                 Authentication
               </h3>
@@ -233,14 +245,22 @@ const DevelopersPage = () => {
               <div className="space-y-2 mt-2">
                 <div className="border-l-2 border-planti-green-500 pl-3">
                   <p className="text-xs font-semibold text-planti-green-800">
-                    GET /api/plants
+                    GET{" "}
+                    {`${
+                      process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+                    }`}
+                    /api/plants
                   </p>
                   <p className="text-xs text-gray-600">Retrieve all plants</p>
                 </div>
 
                 <div className="border-l-2 border-planti-green-500 pl-3">
                   <p className="text-xs font-semibold text-planti-green-800">
-                    GET /api/plants/:id
+                    GET{" "}
+                    {`${
+                      process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+                    }`}
+                    /api/plants/:id
                   </p>
                   <p className="text-xs text-gray-600">
                     Get a specific plant by ID
@@ -249,13 +269,46 @@ const DevelopersPage = () => {
 
                 <div className="border-l-2 border-planti-green-500 pl-3">
                   <p className="text-xs font-semibold text-planti-green-800">
-                    GET /api/plants/:id/health
+                    GET{" "}
+                    {`${
+                      process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+                    }`}
+                    /api/plants/:id/health
                   </p>
                   <p className="text-xs text-gray-600">
                     Get health history for a specific plant
                   </p>
                 </div>
+
+                <div className="border-l-2 border-planti-green-500 pl-3">
+                  <p className="text-xs font-semibold text-planti-green-800">
+                    GET{" "}
+                    {`${
+                      process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+                    }`}
+                    /api/plants/:id/history
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    Get detailed history data for a specific plant
+                  </p>
+                </div>
               </div>
+            </div>
+
+            <div>
+              <h3 className="text-md font-semibold text-gray-700">
+                Example Request
+              </h3>
+              <p className="text-sm text-gray-600 mb-2">
+                Example of a complete API request using curl:
+              </p>
+              <pre className="bg-gray-50 p-2 rounded text-xs overflow-auto">
+                {`curl -X GET "${
+                  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+                }/api/plants" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json"`}
+              </pre>
             </div>
           </div>
         </div>
