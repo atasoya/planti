@@ -1,25 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Map } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 
 import { PlantForm, PlantFormData } from "@/components/PlantForm";
 import { PlantPreviewCard } from "@/components/PlantPreviewCard";
-
-// Add Google Maps types
-declare global {
-  interface Window {
-    google?: {
-      maps: {
-        Map: new (element: HTMLElement, options: object) => unknown;
-        Geocoder: new () => unknown;
-        places: unknown;
-      };
-    };
-  }
-}
 
 const AddPlantPage = () => {
   const router = useRouter();
@@ -43,23 +30,6 @@ const AddPlantPage = () => {
     latitude: "",
     longitude: "",
   });
-
-  // Load Google Maps script
-  useEffect(() => {
-    // Check if Google Maps script is already loaded
-    if (window.google && window.google.maps) return;
-
-    const loadGoogleMapsScript = () => {
-      const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`;
-      script.async = true;
-      script.defer = true;
-      script.onload = () => console.log("Google Maps script loaded");
-      document.head.appendChild(script);
-    };
-
-    loadGoogleMapsScript();
-  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -94,102 +64,17 @@ const AddPlantPage = () => {
       toast.info("Getting your current location...");
 
       navigator.geolocation.getCurrentPosition(
-        async (position) => {
+        (position) => {
           const { latitude, longitude } = position.coords;
 
-          // Use Google Maps Geocoding API to get the address from coordinates
-          try {
-            const response = await fetch(
-              `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
-            );
+          setFormData({
+            ...formData,
+            location: "Current Location",
+            latitude,
+            longitude,
+          });
 
-            const data = await response.json();
-
-            if (
-              data.status === "OK" &&
-              data.results &&
-              data.results.length > 0
-            ) {
-              // Extract location name components from the results
-              const result = data.results[0];
-              const addressComponents = result.address_components || [];
-
-              // Try to find the most relevant location name
-              let locationName = "";
-
-              // First try to find a neighborhood, sublocality, or point of interest
-              for (const component of addressComponents) {
-                const types = component.types || [];
-                if (
-                  types.includes("neighborhood") ||
-                  types.includes("sublocality") ||
-                  types.includes("point_of_interest")
-                ) {
-                  locationName = component.long_name;
-                  break;
-                }
-              }
-
-              // If no specific location found, use the locality (city) or political area
-              if (!locationName) {
-                for (const component of addressComponents) {
-                  const types = component.types || [];
-                  if (
-                    types.includes("locality") ||
-                    types.includes("political")
-                  ) {
-                    locationName = component.long_name;
-                    break;
-                  }
-                }
-              }
-
-              // If still no name found, use the formatted address but simplify it
-              if (!locationName && result.formatted_address) {
-                locationName = result.formatted_address.split(",")[0];
-              }
-
-              // Fall back to first address component if nothing else worked
-              if (!locationName && addressComponents.length > 0) {
-                locationName = addressComponents[0].long_name;
-              }
-
-              // If still no name, just use generic "Current Location"
-              if (!locationName) {
-                locationName = "Current Location";
-              }
-
-              setFormData({
-                ...formData,
-                location: locationName,
-                latitude,
-                longitude,
-              });
-
-              toast.success("Location found!");
-            } else {
-              // If geocoding fails, use a generic location name
-              setFormData({
-                ...formData,
-                location: "Current Location",
-                latitude,
-                longitude,
-              });
-
-              toast.success("Location detected!");
-            }
-          } catch (error) {
-            console.error("Error getting address:", error);
-            // If there's an error with geocoding, use a generic name
-            setFormData({
-              ...formData,
-              location: "Current Location",
-              latitude,
-              longitude,
-            });
-
-            toast.success("Location detected!");
-          }
+          toast.success("Location detected!");
         },
         (error) => {
           console.error("Geolocation error:", error);
@@ -201,16 +86,6 @@ const AddPlantPage = () => {
     } else {
       toast.error("Geolocation is not supported by your browser.");
     }
-  };
-
-  const openGoogleMaps = () => {
-    // For now, we'll open Google Maps in a new tab
-    const url = "https://www.google.com/maps";
-    window.open(url, "_blank");
-
-    toast.info(
-      "Find a location in Google Maps, then enter its coordinates in the form."
-    );
   };
 
   const validateForm = () => {
@@ -263,7 +138,6 @@ const AddPlantPage = () => {
     setIsSubmitting(true);
 
     try {
-      // Send request to the backend API
       const response = await fetch(
         `${
           process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
@@ -273,7 +147,7 @@ const AddPlantPage = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          credentials: "include", // Important for sending cookies with the request
+          credentials: "include",
           body: JSON.stringify(formData),
         }
       );
@@ -315,14 +189,6 @@ const AddPlantPage = () => {
         <h1 className="text-2xl font-bold text-planti-green-900">
           Add New Plant
         </h1>
-
-        <button
-          onClick={openGoogleMaps}
-          className="ml-auto p-2 rounded-md bg-planti-green-600 text-white hover:bg-planti-green-700 flex items-center"
-        >
-          <Map size={16} className="mr-2" />
-          Open Maps
-        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
