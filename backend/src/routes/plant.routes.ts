@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { addPlant, getUserPlants, getPlantById, updatePlant } from '../services/plant.service';
 import { authenticate } from '../middleware/auth.middleware';
+import { combinedAuth } from '../middleware/combined-auth.middleware';
 import cookieParser from 'cookie-parser';
 import { and, eq } from 'drizzle-orm';
 import { plants } from '../db/schema';
@@ -12,7 +13,7 @@ const router = express.Router();
 
 router.use(cookieParser());
 
-router.use(authenticate);
+router.use(combinedAuth);
 
 router.get('/', async (req: Request, res: Response) => {
   try {

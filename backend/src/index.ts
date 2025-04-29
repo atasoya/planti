@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.routes';
 import plantRoutes from './routes/plant.routes';
 import plantDataRoutes from './routes/plant-data.routes';
+import { apiKeyRoutes } from './routes/apikey.routes';
 import { scheduleCronJobs } from './jobs/index';
 
 // Load environment variables
@@ -25,6 +26,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/plants', plantRoutes);
 app.use('/api/plant-data', plantDataRoutes);
+app.use('/api/developer', apiKeyRoutes);
 
 app.get('/api/health', (req: Request, res: Response) => {
   res.json({ status: 'ok' });
