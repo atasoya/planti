@@ -9,6 +9,8 @@ import {
   Droplet,
   Thermometer,
   MapPin,
+  Download,
+  QrCode,
 } from "lucide-react";
 import { toast } from "sonner";
 import { HealtScoreHistory } from "@/components/healtScoreHistory";
@@ -108,6 +110,23 @@ const PlantDetailPage = () => {
       month: "long",
       day: "numeric",
     });
+  };
+
+  const getQrCodeUrl = () => {
+    const baseUrl = window.location.origin;
+    const plantUrl = `${baseUrl}/dashboard/plant/${plantId}`;
+    return `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
+      plantUrl
+    )}`;
+  };
+
+  const handleDownloadQrCode = () => {
+    const link = document.createElement("a");
+    link.href = getQrCodeUrl();
+    link.download = `${plant?.name || "plant"}-qrcode.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   if (loading) {
@@ -265,6 +284,34 @@ const PlantDetailPage = () => {
               <div className="border-t pt-2 text-xs text-gray-500">
                 <p>Added: {formatDate(plant.createdAt)}</p>
                 <p>Updated: {formatDate(plant.updatedAt)}</p>
+              </div>
+
+              <div className="border-t pt-2 mt-2">
+                <div className="text-center py-2">
+                  <div className="flex items-center justify-center mb-1.5">
+                    <QrCode
+                      size={14}
+                      className="mr-1.5 text-planti-green-800"
+                    />
+                    <span className="text-xs font-medium text-planti-green-800">
+                      Plant QR Code
+                    </span>
+                  </div>
+                  <img
+                    src={getQrCodeUrl()}
+                    alt="Plant QR Code"
+                    width={100}
+                    height={100}
+                    className="mx-auto border p-1.5"
+                  />
+                  <button
+                    onClick={handleDownloadQrCode}
+                    className="mt-2 inline-flex items-center justify-center gap-1 text-xs bg-planti-green-600 text-white py-1.5 px-3 rounded hover:bg-planti-green-700"
+                  >
+                    <Download size={12} />
+                    Download
+                  </button>
+                </div>
               </div>
             </div>
           </div>
