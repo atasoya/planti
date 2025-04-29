@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.routes';
 import plantRoutes from './routes/plant.routes';
 import plantDataRoutes from './routes/plant-data.routes';
+import { scheduleCronJobs } from './jobs/index';
 
 // Load environment variables
 dotenv.config();
@@ -32,4 +33,7 @@ app.get('/api/health', (req: Request, res: Response) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  
+  // Initialize cron jobs
+  scheduleCronJobs();
 }); 

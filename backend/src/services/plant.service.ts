@@ -94,4 +94,17 @@ export async function updatePlant(
     console.error('Error in updatePlant service:', error);
     throw error;
   }
+}
+
+export async function getAllPlants(): Promise<any[]> {
+  try {
+    const allPlants = await db.query.plants.findMany({
+      orderBy: [desc(plants.id)]
+    });
+    
+    return allPlants;
+  } catch (error) {
+    console.error('Error in getAllPlants service:', error);
+    throw error;
+  }
 } 
