@@ -8,9 +8,12 @@ import {
   Trash,
   Droplet,
   Thermometer,
-  Calendar,
+  MapPin,
 } from "lucide-react";
 import { toast } from "sonner";
+import { HealtScoreHistory } from "@/components/healtScoreHistory";
+import { HumidityCompare } from "@/components/humidityCompare";
+import { WaterCompare } from "@/components/waterCompare";
 
 interface Plant {
   id: number;
@@ -133,128 +136,146 @@ const PlantDetailPage = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <div className="mb-6 flex items-center justify-between">
+    <div className="max-w-4xl mx-auto">
+      <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center">
           <button
             onClick={() => router.back()}
-            className="mr-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+            className="mr-3 p-1.5 rounded-full hover:bg-gray-100 transition-colors"
             aria-label="Go back"
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={18} />
           </button>
-          <h1 className="text-2xl font-bold text-planti-green-900">
+          <h1 className="text-xl font-bold text-planti-green-900">
             Plant Details
           </h1>
         </div>
         <div className="flex gap-2">
           <button
             onClick={handleEdit}
-            className="p-2 bg-planti-green-600 text-white rounded hover:bg-planti-green-700 flex items-center"
+            className="p-1.5 bg-planti-green-600 text-white text-sm rounded hover:bg-planti-green-700 flex items-center"
           >
-            <Edit size={18} className="mr-1" />
+            <Edit size={16} className="mr-1" />
             Edit
           </button>
           {confirmDelete ? (
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setConfirmDelete(false)}
-                className="p-2 bg-gray-400 text-white rounded hover:bg-gray-500"
+                className="p-1.5 text-sm bg-gray-400 text-white rounded hover:bg-gray-500"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
-                className="p-2 bg-red-600 text-white rounded hover:bg-red-700"
+                className="p-1.5 text-sm bg-red-600 text-white rounded hover:bg-red-700"
               >
-                Confirm Delete
+                Confirm
               </button>
             </div>
           ) : (
             <button
               onClick={() => setConfirmDelete(true)}
-              className="p-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center"
+              className="p-1.5 bg-red-500 text-white text-sm rounded hover:bg-red-600 flex items-center"
             >
-              <Trash size={18} className="mr-1" />
+              <Trash size={16} className="mr-1" />
               Delete
             </button>
           )}
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="p-6 border-b flex items-center gap-4">
-          <div className="text-6xl">{plant.icon}</div>
-          <div>
-            <h2 className="text-2xl font-bold text-planti-green-900">
-              {plant.name}
-            </h2>
-            <p className="text-gray-600 italic">{plant.species}</p>
-            <div className="flex items-center mt-2 text-sm">
-              <span className="flex items-center bg-planti-green-100 text-planti-green-800 px-2 py-1 rounded">
-                <div className="w-2 h-2 bg-planti-green-600 rounded-full mr-2"></div>
-                {plant.healthScore}% Health
-              </span>
-              {plant.healthTrend === "up" && (
-                <span className="ml-2 text-green-600 flex items-center">
-                  ↑ Improving
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="md:col-span-1">
+          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div className="p-3 border-b flex items-center">
+              <div className="text-3xl mr-2">{plant.icon}</div>
+              <div>
+                <h2 className="text-lg font-bold text-planti-green-900 line-clamp-1">
+                  {plant.name}
+                </h2>
+                <p className="text-xs text-gray-600 italic line-clamp-1">
+                  {plant.species}
+                </p>
+              </div>
+            </div>
+
+            <div className="p-3 text-sm space-y-2.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center text-planti-green-900">
+                  <Droplet size={14} className="mr-1.5 text-blue-500" />
+                  <span className="font-medium text-xs">Water</span>
+                </div>
+                <span className="text-xs">{plant.weeklyWaterMl} ml</span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center text-planti-green-900">
+                  <Thermometer size={14} className="mr-1.5 text-red-500" />
+                  <span className="font-medium text-xs">Humidity</span>
+                </div>
+                <span className="text-xs">{plant.humidity}%</span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center text-planti-green-900">
+                  <MapPin size={14} className="mr-1.5 text-green-500" />
+                  <span className="font-medium text-xs">Location</span>
+                </div>
+                <span className="text-xs truncate max-w-[120px]">
+                  {plant.location}
                 </span>
-              )}
-              {plant.healthTrend === "down" && (
-                <span className="ml-2 text-red-600 flex items-center">
-                  ↓ Declining
-                </span>
-              )}
-              {plant.healthTrend === "stable" && (
-                <span className="ml-2 text-blue-600 flex items-center">
-                  → Stable
-                </span>
-              )}
+              </div>
+
+              <div className="bg-planti-green-50 rounded p-2">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-medium">Health Score</span>
+                  <span className="text-xs font-bold">
+                    {plant.healthScore}%
+                  </span>
+                </div>
+                <div className="flex items-center text-xs">
+                  <span className="bg-gray-200 h-1.5 w-full rounded-full overflow-hidden">
+                    <span
+                      className={`block h-full rounded-full ${
+                        plant.healthScore >= 90
+                          ? "bg-green-500"
+                          : plant.healthScore >= 80
+                          ? "bg-green-400"
+                          : plant.healthScore >= 70
+                          ? "bg-yellow-500"
+                          : "bg-red-500"
+                      }`}
+                      style={{ width: `${plant.healthScore}%` }}
+                    ></span>
+                  </span>
+                  {plant.healthTrend === "up" && (
+                    <span className="ml-2 text-green-600 flex items-center">
+                      ↑
+                    </span>
+                  )}
+                  {plant.healthTrend === "down" && (
+                    <span className="ml-2 text-red-600 flex items-center">
+                      ↓
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="border-t pt-2 text-xs text-gray-500">
+                <p>Added: {formatDate(plant.createdAt)}</p>
+                <p>Updated: {formatDate(plant.updatedAt)}</p>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Plant Information</h3>
+        <div className="md:col-span-3 gap-4 grid grid-cols-1">
+          <HealtScoreHistory plantId={parseInt(plantId)} />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <div className="flex items-center text-planti-green-900 mb-2">
-                <Droplet size={18} className="mr-2 text-blue-500" />
-                <span className="font-medium">Water Needs</span>
-              </div>
-              <p className="text-gray-700">{plant.weeklyWaterMl} ml per week</p>
-            </div>
-
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <div className="flex items-center text-planti-green-900 mb-2">
-                <Thermometer size={18} className="mr-2 text-red-500" />
-                <span className="font-medium">Humidity</span>
-              </div>
-              <p className="text-gray-700">
-                {plant.humidity}% optimal humidity
-              </p>
-            </div>
-          </div>
-
-          <div className="mb-6">
-            <h4 className="font-medium mb-2">Location</h4>
-            <p className="text-gray-700 mb-1">{plant.location}</p>
-            <p className="text-gray-500 text-sm">
-              Coordinates: {plant.latitude.toFixed(5)},{" "}
-              {plant.longitude.toFixed(5)}
-            </p>
-          </div>
-
-          <div className="border-t pt-4">
-            <div className="flex items-center text-planti-green-900 mb-2">
-              <Calendar size={18} className="mr-2 text-gray-500" />
-              <span className="font-medium">Plant History</span>
-            </div>
-            <div className="text-sm text-gray-600">
-              <p>Added on {formatDate(plant.createdAt)}</p>
-              <p>Last updated on {formatDate(plant.updatedAt)}</p>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <HumidityCompare plantId={parseInt(plantId)} />
+            <WaterCompare plantId={parseInt(plantId)} />
           </div>
         </div>
       </div>

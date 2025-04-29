@@ -107,7 +107,7 @@ export function HealtScoreHistory({ plantId }: HealthHistoryProps) {
 
   if (loading) {
     return (
-      <Card className="mt-6">
+      <Card>
         <CardHeader>
           <CardTitle>Health Score History</CardTitle>
           <CardDescription>Loading data...</CardDescription>
@@ -121,7 +121,7 @@ export function HealtScoreHistory({ plantId }: HealthHistoryProps) {
 
   if (error) {
     return (
-      <Card className="mt-6">
+      <Card>
         <CardHeader>
           <CardTitle>Health Score History</CardTitle>
           <CardDescription>Error loading data</CardDescription>
@@ -134,7 +134,7 @@ export function HealtScoreHistory({ plantId }: HealthHistoryProps) {
   }
 
   return (
-    <Card className="mt-6">
+    <Card>
       <CardHeader>
         <CardTitle>Health Score History</CardTitle>
         <CardDescription>Last 30 days</CardDescription>

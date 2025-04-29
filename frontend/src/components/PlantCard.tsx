@@ -34,89 +34,91 @@ export const PlantCard = ({
 }: PlantCardProps) => {
   const renderHealthTrendIcon = () => {
     if (healthTrend === "up") {
-      return <TrendingUp size={16} className="text-green-600 mr-1" />;
+      return <TrendingUp size={14} className="text-green-600 mr-1" />;
     } else if (healthTrend === "down") {
-      return <TrendingDown size={16} className="text-red-500 mr-1" />;
+      return <TrendingDown size={14} className="text-red-500 mr-1" />;
     }
     return null; // No icon for stable
   };
 
+  const getHealthColor = () => {
+    if (healthScore >= 90) return "text-green-600";
+    if (healthScore >= 80) return "text-green-500";
+    if (healthScore >= 70) return "text-yellow-500";
+    return "text-red-500";
+  };
+
   return (
     <div
-      className={`bg-white shadow rounded-lg overflow-hidden h-[360px] w-full flex flex-col ${
+      className={`bg-white shadow rounded-lg overflow-hidden h-[290px] w-full flex flex-col ${
         onClick ? "cursor-pointer hover:shadow-md transition-shadow" : ""
       }`}
       onClick={onClick}
     >
-      <div className="p-4 border-b border-gray-100 flex-1">
-        <div className="flex justify-between items-center">
-          <span className="text-2xl">{plant.icon}</span>
+      <div className="flex items-start p-3 border-b border-gray-100">
+        <div className="text-xl mr-2">{plant.icon}</div>
+        <div className="flex-1 min-w-0">
+          <h3 className="text-base font-semibold text-planti-green-900 truncate">
+            {plant.name || (isPreview ? "My New Plant" : "Unknown Plant")}
+          </h3>
+          <p className="text-xs text-gray-600 italic truncate">
+            {plant.species ||
+              (isPreview ? "Select a species" : "Unknown species")}
+          </p>
+        </div>
+        <div className="flex items-center ml-2">
+          {renderHealthTrendIcon()}
+          <span className={`text-xs font-semibold ${getHealthColor()}`}>
+            {healthScore}%
+          </span>
+        </div>
+      </div>
+
+      <div className="flex-1 p-3 flex flex-col">
+        {plant.location && (
+          <div className="flex items-center mb-2 text-xs text-gray-500">
+            <MapPin
+              size={12}
+              className="text-planti-green-600 mr-1 flex-shrink-0"
+            />
+            <span className="truncate">{plant.location}</span>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-2 mt-auto">
+          <div className="bg-blue-50 rounded p-2">
+            <div className="flex items-center">
+              <Droplet size={12} className="text-blue-500 mr-1" />
+              <span className="text-xs font-medium text-blue-800">Water</span>
+            </div>
+            <p className="text-xs mt-1 font-semibold">
+              {plant.weeklyWaterMl} ml
+            </p>
+          </div>
+
+          <div className="bg-red-50 rounded p-2">
+            <div className="flex items-center">
+              <Thermometer size={12} className="text-red-500 mr-1" />
+              <span className="text-xs font-medium text-red-800">Humidity</span>
+            </div>
+            <p className="text-xs mt-1 font-semibold">{plant.humidity}%</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-neutral-100 p-2 text-xs border-t border-gray-200">
+        <div className="flex justify-between">
           <div className="flex items-center">
-            {renderHealthTrendIcon()}
-            <span
-              className={`text-sm font-semibold ${
-                healthScore >= 90
-                  ? "text-green-600"
-                  : healthScore >= 80
-                  ? "text-green-500"
-                  : healthScore >= 70
-                  ? "text-yellow-500"
-                  : "text-red-500"
-              }`}
-            >
+            <span className="text-gray-500 mr-1">Health:</span>
+            <span className={`font-medium ${getHealthColor()}`}>
               {healthScore}%
             </span>
           </div>
-        </div>
-        <h3 className="text-lg font-semibold mt-2 text-planti-green-900 line-clamp-1">
-          {plant.name || (isPreview ? "My New Plant" : "Unknown Plant")}
-        </h3>
-        <p className="text-sm text-gray-600 italic line-clamp-1">
-          {plant.species ||
-            (isPreview ? "Select a species" : "Unknown species")}
-        </p>
-
-        {plant.location && (
-          <div className="flex items-center mt-2 text-sm text-gray-500">
-            <MapPin
-              size={14}
-              className="text-planti-green-600 mr-1 flex-shrink-0"
-            />
-            <span className="truncate max-w-[200px] line-clamp-1">
-              {plant.location}
+          {plant.latitude !== undefined && plant.longitude !== undefined && (
+            <span className="text-gray-400 truncate">
+              {plant.latitude.toFixed(4)}, {plant.longitude.toFixed(4)}
             </span>
-          </div>
-        )}
-
-        {plant.latitude !== undefined && plant.longitude !== undefined && (
-          <p className="text-xs text-gray-400 mt-1 truncate">
-            {plant.latitude.toFixed(5)}, {plant.longitude.toFixed(5)}
-          </p>
-        )}
-      </div>
-
-      <div className="p-4 bg-neutral-50">
-        <div className="flex flex-col gap-2">
-          <div className="bg-white rounded p-2 shadow-sm">
-            <p className="text-xs text-gray-500 mb-1">Weekly Water</p>
-            <div className="flex items-center">
-              <Droplet size={14} className="text-blue-500 mr-1 flex-shrink-0" />
-              <span className="text-sm font-medium">
-                {plant.weeklyWaterMl} ml
-              </span>
-            </div>
-          </div>
-
-          <div className="bg-white rounded p-2 shadow-sm">
-            <p className="text-xs text-gray-500 mb-1">Humidity</p>
-            <div className="flex items-center">
-              <Thermometer
-                size={14}
-                className="text-red-400 mr-1 flex-shrink-0"
-              />
-              <span className="text-sm font-medium">{plant.humidity}%</span>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
