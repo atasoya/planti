@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
+import { ArrowRight, TrendingUp } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import {
   CartesianGrid,
@@ -225,7 +225,7 @@ export function HealtScoreHistory({ plantId }: HealthHistoryProps) {
             </>
           ) : (
             <>
-              Stable <TrendingUp className="h-4 w-4 rotate-90" />
+              Stable <ArrowRight className="h-4 w-4" />
             </>
           )}
         </div>
