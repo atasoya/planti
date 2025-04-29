@@ -108,32 +108,36 @@ async function seed() {
           createdAt: new Date()
         });
       
-      const pastDates = [];
-      for (let i = 1; i <= 7; i++) {
+      const totalDays = 90;
+      
+      for (let i = 1; i <= totalDays; i++) {
         const date = new Date();
         date.setDate(date.getDate() - i);
-        pastDates.push(date);
-      }
-      
-      for (const date of pastDates) {
-        const randomVariation = Math.floor(Math.random() * 10) - 5; 
-        const historicalScore = Math.min(100, Math.max(50, healthScore + randomVariation));
         
-        const randomHumidity = Math.round(
-          Math.min(100, Math.max(30, weatherData.humidity + (Math.random() * 10 - 5)))
+        const waterVariation = 0.7 + (Math.random() * 0.6); 
+        const randomWaterAmount = Math.round(plantInfo.weeklyWaterMl * waterVariation);
+        
+        const humidityVariation = (Math.random() * 30) - 15; 
+        const randomHumidity = Math.min(95, Math.max(20, plantInfo.humidity + humidityVariation));
+        
+        const randomHealthScore = calculateDailyHealthScore(
+          randomWaterAmount, 
+          randomHumidity,
+          plantInfo.weeklyWaterMl,
+          plantInfo.humidity
         );
         
         await db.insert(plantData)
           .values({
             plantId: createdPlant.id,
-            healthScore: Math.round(historicalScore),
-            humidity: randomHumidity,
-            weeklyWaterMl: plantInfo.weeklyWaterMl,
+            healthScore: Math.round(randomHealthScore),
+            humidity: Math.round(randomHumidity),
+            weeklyWaterMl: randomWaterAmount,
             createdAt: date
           });
       }
       
-      console.log(`Created historical data for plant ID: ${createdPlant.id}`);
+      console.log(`Created 3 months of historical data for plant ID: ${createdPlant.id}`);
     }
     
     console.log('✅ Seeding completed successfully!');
@@ -143,6 +147,27 @@ async function seed() {
   } finally {
     process.exit(0);
   }
+}
+
+function calculateDailyHealthScore(
+  waterAmount: number, 
+  humidity: number, 
+  optimalWater: number, 
+  optimalHumidity: number
+): number {
+  const waterDeviation = Math.abs(waterAmount - optimalWater) / optimalWater;
+  const waterScore = 100 - (waterDeviation * 50);
+  
+  const humidityDeviation = Math.abs(humidity - optimalHumidity) / 50;
+  const humidityScore = 100 - (humidityDeviation * 40);
+  
+  const randomVariation = (Math.random() * 10) - 5;
+  
+  let healthScore = (waterScore * 0.6) + (humidityScore * 0.4) + randomVariation;
+  
+  healthScore = Math.min(Math.max(healthScore, 30), 100);
+  
+  return healthScore;
 }
 
 seed(); 
